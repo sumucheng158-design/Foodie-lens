@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --brand: #C0392B;
+  --brand-light: #E8574A;
+  --brand-dark: #922B21;
+  --gold: #D4A017;
+  --ink: #1a1008;
+  --muted: #7a6a5a;
+  --surface: #faf8f4;
+  --border: rgba(0, 0, 0, 0.09);
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-noto-sans), 'Hiragino Sans', system-ui, sans-serif;
+  background: var(--surface);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Custom scrollbar ── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(192,57,43,0.3); border-radius: 3px; }
+
+/* ── Animations ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(24px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shimmer {
+  0%   { background-position: -200% 0; }
+  100% { background-position:  200% 0; }
+}
+
+.animate-fade-up {
+  animation: fadeUp 0.7s ease both;
+}
+.delay-100 { animation-delay: 0.1s; }
+.delay-200 { animation-delay: 0.2s; }
+.delay-300 { animation-delay: 0.3s; }
+.delay-400 { animation-delay: 0.4s; }
+
+/* ── Hero gradient overlay ── */
+.hero-gradient {
+  background: linear-gradient(
+    to top,
+    rgba(18, 8, 4, 0.92) 0%,
+    rgba(18, 8, 4, 0.55) 45%,
+    rgba(18, 8, 4, 0.15) 100%
+  );
+}
+
+/* ── Tag hover ── */
+.ctx-tag {
+  transition: all 0.18s ease;
+}
+.ctx-tag:hover {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+  transform: translateY(-1px);
+}
+.ctx-tag.active {
+  background: var(--brand);
+  color: #fff;
+  border-color: var(--brand);
+}
+
+/* ── Card hover ── */
+.rest-card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.rest-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.12);
+}
+
+/* ── Traffic light items ── */
+.tl-item {
+  transition: background 0.15s;
+}
+.tl-item:hover {
+  background: rgba(0,0,0,0.03);
+}
