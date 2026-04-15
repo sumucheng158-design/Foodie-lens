@@ -1,59 +1,61 @@
+'use client'
+import { useEffect } from 'react'
 import type { FeaturedReview } from '@/lib/data'
 
 function StarRating({ rating }: { rating: number }) {
   const full = Math.floor(rating)
   const hasHalf = rating % 1 >= 0.5
   return (
-    <span style={{ color: 'var(--gold)', fontSize: 16, letterSpacing: 1 }}>
+    <span style={{ color: 'var(--gold)', fontSize: 15, letterSpacing: 1 }}>
       {'★'.repeat(full)}
       {hasHalf ? '½' : ''}
       {'☆'.repeat(5 - full - (hasHalf ? 1 : 0))}
-      <span className="text-stone-400 text-[13px] ml-1">{rating}</span>
+      <span style={{ color: 'var(--muted)', fontSize: 13, marginLeft: 4 }}>{rating}</span>
     </span>
   )
 }
 
-interface ReviewBlockProps {
-  review: FeaturedReview
-}
-
-function ReviewBlock({ review }: ReviewBlockProps) {
-  const { restaurantName, title, excerpt, rating, category, emoji, bgClass, reverse } = review
-
-  const imageEl = (
-    <div
-      className={`rounded-xl h-64 md:h-72 bg-gradient-to-br ${bgClass} flex items-center justify-center text-8xl flex-shrink-0`}
-      role="img"
-      aria-label={`${restaurantName} 食記照片`}
-    >
-      {emoji}
-    </div>
-  )
-
-  const textEl = (
-    <div className="flex flex-col justify-center">
-      <p className="text-[11px] uppercase tracking-[2px] font-medium mb-2" style={{ color: 'var(--brand)' }}>
-        {category}
-      </p>
-      <h3 className="text-[18px] md:text-[20px] font-medium leading-snug mb-3">{title}</h3>
-      <div className="mb-4">
-        <StarRating rating={rating} />
-      </div>
-      <p className="text-[14px] text-stone-500 leading-relaxed mb-4">{excerpt}</p>
-      <button className="text-[13px] font-medium underline underline-offset-4 text-left" style={{ color: 'var(--brand)' }}>
-        閱讀完整食記 →
-      </button>
-    </div>
-  )
+function ReviewBlock({ review }: { review: FeaturedReview }) {
+  const { restaurantName, title, excerpt, rating, category, emoji, gradientStyle, reverse } = review
 
   return (
     <div
-      className={`grid grid-cols-1 md:grid-cols-2 gap-8 md:gap-12 items-center mb-14 ${
-        reverse ? 'md:[direction:rtl]' : ''
-      }`}
+      className="anim"
+      style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
+        gap: 'clamp(24px,5vw,64px)',
+        alignItems: 'center',
+        marginBottom: 'clamp(40px,6vw,80px)',
+        direction: reverse ? 'rtl' : 'ltr',
+      }}
     >
-      <div className={reverse ? 'md:[direction:ltr]' : ''}>{imageEl}</div>
-      <div className={reverse ? 'md:[direction:ltr]' : ''}>{textEl}</div>
+      <div style={{ direction: 'ltr' }}>
+        <div
+          style={{
+            borderRadius: 16,
+            height: 'clamp(220px,28vw,320px)',
+            background: gradientStyle,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 'clamp(60px,9vw,100px)',
+          }}
+          role="img"
+          aria-label={`${restaurantName} 食記照片`}
+        >
+          {emoji}
+        </div>
+      </div>
+      <div style={{ direction: 'ltr' }}>
+        <p style={{ fontSize: 11, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--brand)', fontWeight: 500, marginBottom: 8 }}>{category}</p>
+        <h3 style={{ fontFamily: 'var(--font-noto-serif)', fontSize: 'clamp(17px,2.5vw,22px)', fontWeight: 500, lineHeight: 1.45, marginBottom: 12 }}>{title}</h3>
+        <div style={{ marginBottom: 12 }}><StarRating rating={rating} /></div>
+        <p style={{ fontSize: 14, color: 'var(--muted)', lineHeight: 1.85, marginBottom: 18 }}>{excerpt}</p>
+        <button style={{ fontSize: 13, fontWeight: 500, color: 'var(--brand)', background: 'none', border: 'none', cursor: 'pointer', fontFamily: 'inherit', textDecoration: 'underline', textUnderlineOffset: 3, padding: 0 }}>
+          閱讀完整食記 →
+        </button>
+      </div>
     </div>
   )
 }
@@ -63,17 +65,26 @@ interface FeaturedReviewsProps {
 }
 
 export function FeaturedReviews({ reviews }: FeaturedReviewsProps) {
-  return (
-    <section className="px-6 md:px-14 py-14" style={{ background: 'var(--surface)' }}>
-      <p className="text-[11px] uppercase tracking-[2px] font-medium mb-1" style={{ color: 'var(--brand)' }}>
-        深度食記
-      </p>
-      <h2 className="text-[22px] font-medium mb-1">精選撰文</h2>
-      <p className="text-[14px] text-stone-500 mb-10">文字、光影、味覺，三位一體的用餐紀錄</p>
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      entries => entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('in') }),
+      { threshold: 0.1 }
+    )
+    document.querySelectorAll('.reviews-section .anim').forEach(el => observer.observe(el))
+    return () => observer.disconnect()
+  }, [])
 
-      {reviews.map((r) => (
-        <ReviewBlock key={r.id} review={r} />
-      ))}
+  return (
+    <section
+      className="reviews-section"
+      id="reviews"
+      style={{ padding: 'clamp(48px,7vw,96px) clamp(16px,5vw,64px)', background: 'var(--surface)' }}
+    >
+      <p style={{ fontSize: 11, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--brand)', fontWeight: 500, marginBottom: 6 }}>深度食記</p>
+      <h2 style={{ fontFamily: 'var(--font-noto-serif)', fontSize: 'clamp(20px,3vw,28px)', fontWeight: 500, marginBottom: 6 }}>精選撰文</h2>
+      <p style={{ fontSize: 14, color: 'var(--muted)', marginBottom: 'clamp(28px,4vw,48px)' }}>文字、光影、味覺，三位一體的用餐紀錄</p>
+
+      {reviews.map(r => <ReviewBlock key={r.id} review={r} />)}
     </section>
   )
 }

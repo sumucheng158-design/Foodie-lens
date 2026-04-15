@@ -1,42 +1,43 @@
 'use client'
-
 import { useState } from 'react'
 import { CONTEXT_TAGS } from '@/lib/data'
 
 export function ContextTags() {
   const [active, setActive] = useState<Set<string>>(new Set())
 
-  function toggle(tag: string) {
-    setActive((prev) => {
+  function toggle(key: string) {
+    setActive(prev => {
       const next = new Set(prev)
-      next.has(tag) ? next.delete(tag) : next.add(tag)
+      next.has(key) ? next.delete(key) : next.add(key)
       return next
     })
   }
 
+  function clearAll() {
+    setActive(new Set())
+  }
+
+  const selectedLabels = CONTEXT_TAGS
+    .filter(t => active.has(t.key))
+    .map(t => t.tag)
+
   return (
-    <section className="px-6 md:px-14 py-14 bg-white">
-      <p className="text-[11px] uppercase tracking-[2px] font-medium mb-1" style={{ color: 'var(--brand)' }}>
-        情境標籤
-      </p>
-      <h2 className="text-[22px] font-medium mb-1">找到你的用餐情境</h2>
-      <p className="text-[14px] text-stone-500 mb-8">
-        點擊標籤，篩選符合你今天心情的餐廳
-      </p>
+    <section
+      id="context"
+      style={{ padding: 'clamp(48px,7vw,96px) clamp(16px,5vw,64px)', background: 'var(--card)' }}
+    >
+      <p style={{ fontSize: 11, letterSpacing: '2.5px', textTransform: 'uppercase', color: 'var(--brand)', fontWeight: 500, marginBottom: 6 }}>情境標籤</p>
+      <h2 style={{ fontFamily: 'var(--font-noto-serif)', fontSize: 'clamp(20px,3vw,28px)', fontWeight: 500, marginBottom: 6 }}>找到你的用餐情境</h2>
+      <p style={{ fontSize: 14, color: 'var(--muted)', marginBottom: 'clamp(28px,4vw,48px)' }}>點擊標籤篩選，找到最適合今天心情的餐廳</p>
 
       <div className="flex flex-wrap gap-2.5">
-        {CONTEXT_TAGS.map((tag) => (
+        {CONTEXT_TAGS.map(({ tag, key }) => (
           <button
-            key={tag}
-            onClick={() => toggle(tag)}
-            aria-pressed={active.has(tag)}
-            className="ctx-tag rounded-full px-4 py-2 text-[13px] bg-white"
-            style={{
-              border: '0.5px solid var(--border)',
-              color: active.has(tag) ? '#fff' : 'var(--ink)',
-              background: active.has(tag) ? 'var(--brand)' : 'var(--white)',
-              borderColor: active.has(tag) ? 'var(--brand)' : undefined,
-            }}
+            key={key}
+            onClick={() => toggle(key)}
+            aria-pressed={active.has(key)}
+            className={`ctx-tag rounded-full ${active.has(key) ? 'active' : ''}`}
+            style={{ padding: '8px 18px', fontSize: 13, cursor: 'pointer', fontFamily: 'inherit', border: '0.5px solid var(--border)' }}
           >
             {tag}
           </button>
@@ -44,16 +45,29 @@ export function ContextTags() {
       </div>
 
       {active.size > 0 && (
-        <p className="text-[13px] text-stone-400 mt-5">
-          已選 {active.size} 個標籤 ·{' '}
+        <div
+          style={{
+            marginTop: 24,
+            padding: 16,
+            background: 'var(--surface)',
+            borderRadius: 12,
+            fontSize: 13,
+            color: 'var(--muted)',
+            border: '0.5px solid var(--border)',
+          }}
+        >
+          已選 <strong style={{ color: 'var(--ink)' }}>{active.size}</strong> 個情境標籤：
+          {selectedLabels.join('、')}
+          {' · '}
           <button
-            onClick={() => setActive(new Set())}
-            className="underline underline-offset-2"
-            style={{ color: 'var(--brand)' }}
+            onClick={clearAll}
+            style={{ background: 'none', border: 'none', cursor: 'pointer', color: 'var(--brand)', fontSize: 13, fontFamily: 'inherit', textDecoration: 'underline', textUnderlineOffset: 2, padding: 0 }}
           >
             清除全部
           </button>
-        </p>
+          <br />
+          <span style={{ marginTop: 6, display: 'inline-block' }}>✅ 正在為你篩選符合的餐廳…</span>
+        </div>
       )}
     </section>
   )

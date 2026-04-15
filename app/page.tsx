@@ -9,7 +9,8 @@ import { Footer } from '@/components/Footer'
 import { RESTAURANTS, FEATURED_REVIEWS } from '@/lib/data'
 
 export default function HomePage() {
-  const featured = RESTAURANTS[0] // 一麵堂 作為 Demo
+  // Use first restaurant's traffic light as the demo section
+  const featured = RESTAURANTS[0]
 
   return (
     <main>
@@ -17,10 +18,7 @@ export default function HomePage() {
       <HeroSection />
       <RestaurantGrid restaurants={RESTAURANTS} />
       <FeaturedReviews reviews={FEATURED_REVIEWS} />
-      <FlavorProfileSection
-        restaurantName={featured.name}
-        data={featured.flavorProfile}
-      />
+      <FlavorProfileSection restaurants={RESTAURANTS} />
       <TrafficLight data={featured.trafficLight} />
       <ContextTags />
       <Footer />

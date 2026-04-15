@@ -4,14 +4,14 @@ import './globals.css'
 
 const notoSans = Noto_Sans_TC({
   subsets: ['latin'],
-  weight: ['400', '500'],
+  weight: ['300', '400', '500'],
   variable: '--font-noto-sans',
   display: 'swap',
 })
 
 const notoSerif = Noto_Serif_TC({
   subsets: ['latin'],
-  weight: ['400', '500'],
+  weight: ['400', '500', '700'],
   variable: '--font-noto-serif',
   display: 'swap',
 })
@@ -28,14 +28,18 @@ export const metadata: Metadata = {
   },
 }
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="zh-TW" className={`${notoSans.variable} ${notoSerif.variable}`}>
-      <body className="font-body antialiased">{children}</body>
+    <html lang="zh-TW" className={`${notoSans.variable} ${notoSerif.variable}`} suppressHydrationWarning>
+      <head>
+        {/* Inject dark mode class before paint to avoid flash */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){try{if(localStorage.getItem('theme')==='dark'||(!localStorage.getItem('theme')&&window.matchMedia('(prefers-color-scheme: dark)').matches)){document.documentElement.classList.add('dark')}}catch(e){}})()`,
+          }}
+        />
+      </head>
+      <body className="antialiased">{children}</body>
     </html>
   )
 }
